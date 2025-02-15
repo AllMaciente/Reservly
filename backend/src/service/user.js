@@ -7,50 +7,46 @@ const jwt = require("jsonwebtoken");
 const SALT = 12;
 
 class UserService {
-  async CreateUser(name, email, password) {
-    const hashedPassword = await bcrypt.hash(password, SALT);
+  async CreateUser(userData) {
+    const hashedPassword = await bcrypt.hash(userData.password, SALT);
     return await prisma.user.create({
       data: {
-        name,
-        email,
+        name: userData.name,
+        email: userData.email,
         password: hashedPassword,
       },
     });
   }
-  async GetUserById(id) {
+  async GetUserById(userData) {
     return await prisma.user.findUnique({
       where: {
-        id,
+        id: userData.id,
       },
     });
   }
   async GetUsers() {
     return await prisma.user.findMany();
   }
-  async UpdateUser(id, name, email, password, role) {
+  async UpdateUser(userData) {
     const user = await prisma.user.findUnique({
       where: {
-        id,
+        id: userData.id,
       },
     });
     if (!user) {
       throw new Error("User not found");
     }
 
-    const hashedPassword = await bcrypt.hash(password, SALT);
+    const hashedPassword = await bcrypt.hash(userData.password, SALT);
 
-    name = name || user.name;
-    email = email || user.email;
-    role = role || user.role;
-    if (password) {
-      password = hashedPassword;
-    } else {
-      password = user.password;
-    }
+    const name = userData.name || user.name;
+    const email = userData.email || user.email;
+    const role = userData.role || user.role;
+    const password = userData.password ? hashedPassword : user.password;
 
     return await prisma.user.update({
       where: {
-        id,
+        id: userData.id,
       },
       data: {
         name,
@@ -60,24 +56,24 @@ class UserService {
       },
     });
   }
-  async DeleteUser(id) {
+  async DeleteUser(userData) {
     return await prisma.user.delete({
       where: {
-        id,
+        id: userData.id,
       },
     });
   }
 
-  async LoginUser(email, password) {
+  async LoginUser(userData) {
     const user = await prisma.user.findUnique({
       where: {
-        email,
+        email: userData.email,
       },
     });
     if (!user) {
       throw new Error("User not found");
     }
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(userData.password, user.password);
     if (!isMatch) {
       throw new Error("Invalid password");
     }
