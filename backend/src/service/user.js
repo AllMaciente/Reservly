@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from "@prisma/client";
+const { PrismaClient, Role } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const bcrypt = require("bcrypt");
@@ -20,7 +20,7 @@ class UserService {
   async GetUserById(userData) {
     return await prisma.user.findUnique({
       where: {
-        id: userData.id,
+        id: Number(userData.id),
       },
     });
   }
@@ -36,13 +36,12 @@ class UserService {
     if (!user) {
       throw new Error("User not found");
     }
-
-    const hashedPassword = await bcrypt.hash(userData.password, SALT);
-
     const name = userData.name || user.name;
     const email = userData.email || user.email;
     const role = userData.role || user.role;
-    const password = userData.password ? hashedPassword : user.password;
+    const password = userData.password
+      ? await bcrypt.hash(userData.password, SALT)
+      : user.password;
 
     return await prisma.user.update({
       where: {

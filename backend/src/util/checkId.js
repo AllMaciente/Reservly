@@ -1,4 +1,5 @@
 function checkId(req, id) {
-  if (req.session.userId == id) true;
-  else false;
+  return req.session.id == String(id);
 }
+
+module.exports = checkId;

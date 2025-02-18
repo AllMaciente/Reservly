@@ -38,9 +38,11 @@ class UserController {
       if (!validation.success) {
         return res.status(400).json({ error: validation.error.format() });
       }
-      if (checkRole(req, "admin") || checkId(req, req.params.id)) {
-        const user = await UserService.GetUser(req.params.id);
+      if (checkRole(req, "ADMIN") || checkId(req, req.params.id)) {
+        const user = await UserService.GetUserById(validation.data);
         res.status(200).json(user);
+      } else {
+        return res.status(401).json({ error: "Unauthorized" });
       }
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -55,7 +57,7 @@ class UserController {
       if (!validation.success) {
         return res.status(400).json({ error: validation.error.format() });
       }
-      if (checkRole(req, "admin") || checkId(req, req.params.id)) {
+      if (checkRole(req, "ADMIN") || checkId(req, req.params.id)) {
         const user = await UserService.UpdateUser(validation.data);
         res.status(200).json(user);
       }
