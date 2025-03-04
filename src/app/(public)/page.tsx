@@ -5,6 +5,8 @@ export default function Home() {
     <div>
       <Header.Root>
         <Header.Title />
+
+        <Header.Login />
       </Header.Root>
     </div>
   );
