@@ -8,6 +8,9 @@ const handler = NextAuth({
   session: {
     strategy: "jwt",
   },
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     CredentialsProvider({
       credentials: { email: {}, password: {} },
@@ -42,6 +45,7 @@ const handler = NextAuth({
           name: user.name,
           email: user.email,
           image: user.image,
+          role: user.role,
         };
       },
     }),
