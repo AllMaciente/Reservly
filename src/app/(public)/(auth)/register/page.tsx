@@ -21,23 +21,27 @@ import { redirect } from "next/navigation";
 
 export default function PaginaRegistro() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erroComp, setErroComp] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (senha !== confirmarSenha) {
+    if (password !== confirmarSenha) {
       setErroComp("As senhas não coincidem");
       return;
     }
     const response = await fetch("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ email, senha }),
+      body: JSON.stringify({ username, email, password }),
     });
-    // Lógica de registro aqui
-    console.log({ email, senha });
+    if (response.status === 400) {
+      const data = await response.json();
+      setErroComp(data.message);
+    }
+
     if (response.ok) {
       redirect("/login");
     }
@@ -54,6 +58,17 @@ export default function PaginaRegistro() {
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Nome de Usuário</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Nome de usuário"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="email">E-mail</Label>
                 <Input
@@ -74,8 +89,8 @@ export default function PaginaRegistro() {
                     id="senha"
                     type={mostrarSenha ? "text" : "password"}
                     required
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <Button
                     type="button"
