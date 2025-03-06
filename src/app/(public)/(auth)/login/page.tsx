@@ -19,15 +19,25 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+
 export default function PaginaLogin() {
+  const router = useRouter();
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica de login aqui
-    console.log({ email, senha });
+    const response = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+    if (!response?.error) {
+      router.push("/");
+    }
   };
 
   return (
@@ -67,8 +77,8 @@ export default function PaginaLogin() {
                   id="senha"
                   type={mostrarSenha ? "text" : "password"}
                   required
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <Button
                   type="button"
