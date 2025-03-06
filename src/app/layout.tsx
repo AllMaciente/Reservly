@@ -1,3 +1,5 @@
+import { Metadata } from "next";
+
 import "./globals.css";
 import ClientSessionProvider from "@/components/ClientSessionProvider";
 
