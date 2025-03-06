@@ -17,24 +17,31 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { redirect } from "next/navigation";
 
 export default function PaginaRegistro() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
-  const [erroSenha, setErroSenha] = useState("");
+  const [erroComp, setErroComp] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (senha !== confirmarSenha) {
-      setErroSenha("As senhas não coincidem");
+      setErroComp("As senhas não coincidem");
       return;
     }
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ email, senha }),
+    });
     // Lógica de registro aqui
     console.log({ email, senha });
+    if (response.ok) {
+      redirect("/login");
+    }
   };
-
   return (
     <>
       <div className="flex min-h-screen items-center justify-center p-4">
@@ -97,9 +104,7 @@ export default function PaginaRegistro() {
                   value={confirmarSenha}
                   onChange={(e) => setConfirmarSenha(e.target.value)}
                 />
-                {erroSenha && (
-                  <p className="text-red-500 text-sm">{erroSenha}</p>
-                )}
+                {erroComp && <p className="text-red-500 text-sm">{erroComp}</p>}
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4 pt-4">
