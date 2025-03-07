@@ -20,6 +20,7 @@ export async function auth() {
       where: { email: session.user.email ?? undefined },
     });
     session.user.role = user?.role || null;
+    session.user.id = user?.id || null;
   }
 
   return session;
