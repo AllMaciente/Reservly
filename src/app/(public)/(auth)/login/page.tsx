@@ -124,6 +124,7 @@ export default function PaginaLogin() {
                 variant="outline"
                 type="button"
                 className="flex items-center gap-2"
+                onClick={() => signIn("github")}
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -139,6 +140,7 @@ export default function PaginaLogin() {
                 variant="outline"
                 type="button"
                 className="flex items-center gap-2"
+                disabled
               >
                 <svg
                   viewBox="0 0 24 24"

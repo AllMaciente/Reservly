@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { redirect } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function PaginaRegistro() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -139,6 +140,7 @@ export default function PaginaRegistro() {
                 <Button
                   variant="outline"
                   type="button"
+                  onClick={() => signIn("github")}
                   className="flex items-center gap-2"
                 >
                   <svg
@@ -155,6 +157,7 @@ export default function PaginaRegistro() {
                   variant="outline"
                   type="button"
                   className="flex items-center gap-2"
+                  disabled
                 >
                   <svg
                     viewBox="0 0 24 24"
