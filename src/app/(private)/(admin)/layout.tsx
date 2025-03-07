@@ -1,5 +1,4 @@
 "use client";
-import { Header } from "@/components/Header";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -9,14 +8,18 @@ export default function LayoutPrivate({
 }: {
   children: React.ReactNode;
 }) {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
+    } else if (status === "authenticated") {
+      if (session?.user?.role != "ADMIN") {
+        router.push("/dashboard");
+      }
     }
-  }, [status, router]);
+  }, [status, session, router]);
 
   if (status === "loading" || status === "unauthenticated") {
     return null;
@@ -24,10 +27,6 @@ export default function LayoutPrivate({
 
   return (
     <>
-      <Header.Root>
-        <Header.Title href="/dashboard" />
-        <Header.Avatar />
-      </Header.Root>
       <main>{children}</main>
     </>
   );

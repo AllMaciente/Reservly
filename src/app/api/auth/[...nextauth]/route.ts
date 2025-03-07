@@ -1,9 +1,25 @@
 import { PrismaClient } from "@prisma/client";
-import NextAuth from "next-auth";
+import NextAuth, { User as NextAuthUser, Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      role?: string | null;
+    };
+  }
+}
+
+interface UserWithRole extends NextAuthUser {
+  role: string;
+}
 
 const handler = NextAuth({
   session: {
@@ -84,6 +100,26 @@ const handler = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as UserWithRole).role;
+        token.email = user.email;
+        token.name = user.name;
+        token.image = user.image;
+      }
+      return token;
+    },
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (token && session.user) {
+        session.user.role = token.role as string | undefined;
+        session.user.email = token.email as string | undefined;
+        session.user.name = token.name as string | undefined;
+        session.user.image = token.image as string | undefined;
+      }
+      return session;
+    },
+  },
 });
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST, handler as authOptions };

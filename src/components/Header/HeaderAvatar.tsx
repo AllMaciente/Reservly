@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { User, Settings, LogOut, HelpCircle } from "lucide-react";
+import { User, Settings, LogOut, HelpCircle, CrownIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -37,8 +37,11 @@ export function HeaderAvatar() {
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">
+              <p className="text-sm font-medium leading-none flex items-center">
                 {session?.user?.name || "John Doe"}
+                {session?.user?.role === "ADMIN" && (
+                  <CrownIcon className="ml-2 h-4 w-4" />
+                )}
               </p>
               <p className="text-xs leading-none text-muted-foreground">
                 {session?.user?.email || "john.doe@example.com"}

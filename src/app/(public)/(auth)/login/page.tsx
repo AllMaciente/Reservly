@@ -27,6 +27,7 @@ export default function PaginaLogin() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +36,10 @@ export default function PaginaLogin() {
       password,
       redirect: false,
     });
-    if (!response?.error) {
+    if (response?.error) {
+      setError(response.error);
+    } else {
+      setError(null);
       router.push("/");
     }
   };
@@ -51,6 +55,7 @@ export default function PaginaLogin() {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            {error && <div className="text-red-500 text-sm">{error}</div>}
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
               <Input
